@@ -53,15 +53,17 @@ def convert_to_nwb(path: str):
 def main(paths: List[str]):
     print(f'sys.argv: {sys.argv}')
     # print(os.environ)
-    for path in paths:
-        print(f'Path: {path}')
-        path = os.path.abspath(path)
-        # convert_to_nwb(path)
-        print(f'Abspath: {path}')
-        with open(path, 'r') as f:
-            x = f.read()
-        with open(f'{path}.nwb', 'w') as f:
-            f.write(x)
+    # for path in paths:
+    #     print(f'Path: {path}')
+    #     # path = os.path.abspath(path)
+    #     # convert_to_nwb(path)
+    #     print(f'Abspath: {path}')
+    #     # with open(path, 'r') as f:
+    #     #     x = f.read()
+    #     with open(f'{path}.nwb', 'w') as f:
+    #         f.write(path)
+    with open(f'text.text.nwb', 'w') as f:
+        f.write(str(sys.argv))
 
 
 if __name__ == '__main__':
