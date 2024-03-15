@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """
 Takes any supported (local) file or list of files as arguments and converts to NWB format.
 
@@ -50,14 +51,14 @@ def convert_to_nwb(path: str):
 
 
 def main(paths: List[str]):
-    print(paths)
+    print(f'sys.argv: {sys.argv}')
+    # print(os.environ)
     for path in paths:
-        print(path)
+        print(f'Path: {path}')
         path = os.path.abspath(path)
         # convert_to_nwb(path)
         print(f'Abspath: {path}')
         with open(path, 'r') as f:
-            print(f'fobj: {f}')
             x = f.read()
         with open(f'{path}.nwb', 'w') as f:
             f.write(x)
