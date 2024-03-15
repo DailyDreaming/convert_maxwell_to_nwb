@@ -21,6 +21,6 @@ process convert_to_nwb {
     script:
         """
         echo "Running NWB conversion!"
-        cd /tmp/nwb && python3 /tmp/run.py ${input_file}
+        python3 /tmp/run.py ${input_file}
         """
 }
