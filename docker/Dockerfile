@@ -6,9 +6,7 @@ ENV ENDPOINT_URL="https://s3-west.nrp-nautilus.io"
 RUN apt update && apt upgrade -y
 RUN apt-get install python3 python3-dev python3-distutils python3-pip python3-apt -y
 RUN python3 -m pip install neuroconv[maxwell]
-RUN mkdir /tmp/nwb
 
 COPY run.py /tmp/run.py
 
-WORKDIR /tmp/nwb
 ENTRYPOINT ["python3", "/tmp/run.py"]

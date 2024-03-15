@@ -44,20 +44,18 @@ def convert_to_nwb(path: str):
         return
 
     if path.endswith('.raw.h5'):
-        convert_maxwell_to_nwb(path, f'/tmp/nwb/{os.path.basename(path)}.nwb')
+        convert_maxwell_to_nwb(path, f'{path}.nwb')
     else:
         raise NotImplementedError(f'Unsupported file type cannot be converted to NWB: {path}')
 
 
 def main(paths: List[str]):
-    if not os.path.exists('/tmp/nwb'):
-        os.mkdir('/tmp/nwb')
-
     for path in paths:
+        path = os.path.abspath(path)
         # convert_to_nwb(path)
         with open(path, 'r') as f:
             x = f.read()
-        with open(f'/tmp/nwb/{os.path.basename(path)}.nwb', 'w') as f:
+        with open(f'{path}.nwb', 'w') as f:
             f.write(x)
 
 
