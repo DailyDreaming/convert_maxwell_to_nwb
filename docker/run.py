@@ -50,6 +50,7 @@ def convert_to_nwb(path: str):
 
 
 def main(paths: List[str]):
+    print(paths)
     for path in paths:
         print(path)
         path = os.path.abspath(path)
