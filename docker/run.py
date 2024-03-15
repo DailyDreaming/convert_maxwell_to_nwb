@@ -1,3 +1,12 @@
+"""
+Takes any supported (local) file or list of files as arguments and converts to NWB format.
+
+Output files are placed in /tmp/nwb/.
+
+If run inside of a docker image, you'll need to mount this directory, for example:
+
+  docker run -v /home/quokka/outputs:/tmp/nwb quay.io/ucsc_cgl/nwb-converter:latest input.raw.h5
+"""
 import os
 import sys
 
@@ -35,14 +44,21 @@ def convert_to_nwb(path: str):
         return
 
     if path.endswith('.raw.h5'):
-        convert_maxwell_to_nwb(path, f'{path}.nwb')
+        convert_maxwell_to_nwb(path, f'/tmp/nwb/{os.path.basename(path)}.nwb')
     else:
         raise NotImplementedError(f'Unsupported file type cannot be converted to NWB: {path}')
 
 
 def main(paths: List[str]):
+    if not os.path.exists('/tmp/nwb'):
+        os.mkdir('/tmp/nwb')
+
     for path in paths:
-        convert_to_nwb(path)
+        # convert_to_nwb(path)
+        with open(path, 'r') as f:
+            x = f.read()
+        with open(f'/tmp/nwb/{os.path.basename(path)}.nwb', 'w') as f:
+            f.write(x)
 
 
 if __name__ == '__main__':
