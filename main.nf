@@ -20,8 +20,6 @@ process convert_to_nwb {
 
     script:
         """
-        echo "Running NWB conversion!
-        ls
         run.py ${input_file}
         """
 }
