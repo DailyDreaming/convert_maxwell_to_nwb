@@ -20,6 +20,7 @@ process convert_to_nwb {
 
     script:
         """
-        run.py ${input_file}
+        echo "x" > test.test.nwb
+        # run.py ${input_file}
         """
 }
