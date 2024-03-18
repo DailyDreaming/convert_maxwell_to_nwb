@@ -1,6 +1,9 @@
 params.input_file = 'notset'
 
 workflow {
+    cpus '1'
+    memory '1 GB'
+    disk '500 MB'
     convert_to_nwb(params.input_file)
     convert_to_nwb.out.view()
 }
