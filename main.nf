@@ -6,7 +6,7 @@ workflow {
 }
 
 process convert_to_nwb {
-    publishDir "s3://braingeneers/test/", mode: 'copy', overwrite: true
+    publishDir "s3://braingeneersdev/test/", mode: 'copy', overwrite: true
     container 'quay.io/ucsc_cgl/nwb-converter:latest'
     cpus '2'
     memory '8 GB'
@@ -20,7 +20,6 @@ process convert_to_nwb {
 
     script:
         """
-        # echo "x" > text.text.nwb
         run.py ${input_file}
         """
 }
