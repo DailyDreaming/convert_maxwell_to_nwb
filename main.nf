@@ -20,7 +20,7 @@ process convert_to_nwb {
 
     script:
         """
-        echo "x" > text.text.nwb
-        # run.py ${input_file}
+        # echo "x" > text.text.nwb
+        run.py ${input_file}
         """
 }
