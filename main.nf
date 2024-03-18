@@ -16,7 +16,7 @@ process convert_to_nwb {
         path input_file
 
     output:
-        path "${input_file.baseName}.test.nwb"
+        path "${input_file.baseName}.text.nwb"
 
     script:
         """
