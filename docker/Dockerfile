@@ -8,5 +8,3 @@ RUN apt-get install python3 python3-dev python3-distutils python3-pip python3-ap
 RUN python3 -m pip install neuroconv[maxwell]
 
 COPY run.py /bin/run.py
-
-ENTRYPOINT ["python3", "/bin/run.py"]
