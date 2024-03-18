@@ -57,10 +57,10 @@ def main(paths: List[str]):
         # path = os.path.abspath(path)
         # convert_to_nwb(path)
         print(f'Abspath: {path}')
-        # with open(path, 'r') as f:
-        #     x = f.read()
+        with open(path, 'r') as f:
+            x = f.read()
         with open(f'{path}.nwb', 'w') as f:
-            f.write(path)
+            f.write(x)
     # with open(f'text.text.nwb', 'w') as f:
     #     f.write(str(sys.argv))
 
