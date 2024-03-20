@@ -4,9 +4,9 @@ Takes any supported (local) file or list of files as arguments and converts to N
 
 Output files are placed in /tmp/nwb/.
 
-If run inside of a docker image, you'll need to mount this directory, for example:
+To run:
 
-  docker run -v /home/quokka/outputs:/tmp/nwb quay.io/ucsc_cgl/nwb-converter:latest input.raw.h5
+  docker run -v /home/quokka/outputs:/tmp/nwb quay.io/ucsc_cgl/nwb-converter:0.1 python3 /bin/run.py your_maxwell_file.raw.h5
 """
 import os
 import sys
@@ -37,8 +37,6 @@ def convert_to_nwb(path: str):
     Converts any recognized (and implemented) ephys file format into NWB format.
 
     path: Any URI string representing a file (i.e. s3://file/path.txt, /home/user/dir/path.txt, etc.).
-    dry_run: If True, this skips conversion, which typically takes hours, and only downloads the path URI
-     from s3 and re-uploads it to s3 with a new name (if an s3 URI is used).
     """
     if path.endswith('.nwb'):
         print(f'Nothing to be done.  File "{path}" is already an NWB file.')
