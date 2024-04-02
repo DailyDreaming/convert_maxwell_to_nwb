@@ -20,6 +20,8 @@ process convert_to_nwb {
 
     script:
         """
+        ls /root/
+        ls /root/.aws/
         run.py ${input_file}
         """
 }

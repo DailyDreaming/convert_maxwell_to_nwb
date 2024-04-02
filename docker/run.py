@@ -97,23 +97,27 @@ def convert_to_nwb(path: str, dry_run: bool = False):
     if not path.endswith('.raw.h5'):
         raise NotImplementedError(f'Unsupported file type cannot be converted to NWB: {path}')
 
-    if path.startswith('s3:'):
-        dst_s3_path = get_dst_s3_nwb_path(path)
-        if not dst_s3_path:
-            print(f'Warning: non-canonical s3 path for Maxwell is missing "/original/data/".  '
-                  f'Skipping conversion of NWB file.', file=sys.stderr)
-            return
-        elif not s3_file_exists(dst_s3_path):
-            print(f'NWB file at {dst_s3_path} already exists.  Skipping conversion of NWB file.', file=sys.stderr)
-            return
-        else:
-            # download from s3; convert locally; re-upload to s3 with new path
-            maxwell_local_path = download_s3_file(src_s3_path=path, dst_local_path=os.path.basename(path))
-            nwb_local_path = convert_maxwell_to_nwb(maxwell_local_path, f'{maxwell_local_path}.nwb', dry_run=dry_run)
-            upload_s3_file(src_local_path=nwb_local_path, dst_s3_path=dst_s3_path)
-    else:
-        # do a local conversion; do not upload to s3
-        convert_maxwell_to_nwb(path, f'{path}.nwb', dry_run=dry_run)
+    maxwell_local_path = download_s3_file(src_s3_path=path, dst_local_path=os.path.basename(path))
+    # nwb_local_path = convert_maxwell_to_nwb(maxwell_local_path, f'{maxwell_local_path}.nwb', dry_run=dry_run)
+    upload_s3_file(src_local_path=maxwell_local_path, dst_s3_path=f's3://braingeneersdev/test/{os.path.basename(maxwell_local_path)}.nwb')
+
+    # if path.startswith('s3:'):
+    #     dst_s3_path = get_dst_s3_nwb_path(path)
+    #     if not dst_s3_path:
+    #         print(f'Warning: non-canonical s3 path for Maxwell is missing "/original/data/".  '
+    #               f'Skipping conversion of NWB file.', file=sys.stderr)
+    #         return
+    #     elif not s3_file_exists(dst_s3_path):
+    #         print(f'NWB file at {dst_s3_path} already exists.  Skipping conversion of NWB file.', file=sys.stderr)
+    #         return
+    #     else:
+    #         # download from s3; convert locally; re-upload to s3 with new path
+    #         maxwell_local_path = download_s3_file(src_s3_path=path, dst_local_path=os.path.basename(path))
+    #         nwb_local_path = convert_maxwell_to_nwb(maxwell_local_path, f'{maxwell_local_path}.nwb', dry_run=dry_run)
+    #         upload_s3_file(src_local_path=nwb_local_path, dst_s3_path=dst_s3_path)
+    # else:
+    #     # do a local conversion; do not upload to s3
+    #     convert_maxwell_to_nwb(path, f'{path}.nwb', dry_run=dry_run)
 
 
 def main(paths: List[str]):
