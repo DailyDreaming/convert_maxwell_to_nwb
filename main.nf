@@ -13,7 +13,7 @@ process convert_to_nwb {
     disk '2 GB'
 
     input:
-        path input_file
+        val input_file
 
     output:
         path "${input_file}.nwb"
