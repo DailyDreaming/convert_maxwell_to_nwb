@@ -17,6 +17,17 @@ def get_s3_client():
     return boto3.client('s3')
 
 
+def list_uuid_original_data(uuid: str, bucket: str = 'braingeneers') -> List[str]:
+    """Lists all objects contained in s3://{bucket}/{uuid}/original/data/ ."""
+    s3 = get_s3_client()
+    paginator = s3.get_paginator('list_objects_v2')
+    for page in paginator.paginate(Bucket=bucket, Prefix=f'{uuid}/original/data/'):
+        for obj in page.get('Contents', []):
+            obj_name = obj.get('Key', '/')
+            if not obj_name.endswith('/'):
+                yield f's3://{bucket}/{obj_name}'
+
+
 def download_s3_file(src_s3_path: str, dst_local_path: str) -> str:
     bucket, file_key = src_s3_path[len('s3:'):].lstrip('/').split('/', 1)
     dst_local_path = os.path.abspath(dst_local_path)
@@ -54,13 +65,10 @@ def convert_maxwell_to_nwb(src_local_path: str, dst_local_path: str, dry_run: bo
     if not os.path.exists(src_local_path):
         raise FileNotFoundError(f'Local path does not exist: {src_local_path}')
 
-    if dry_run:
-        copyfile(src_local_path, dst_local_path)
-    else:
-        interface = MaxOneRecordingInterface(file_path=src_local_path, verbose=True)
-        metadata = interface.get_metadata()
-        metadata["NWBFile"].update(session_start_time=datetime.now(tz=tz.gettz("US/Pacific")))
-        interface.run_conversion(nwbfile_path=dst_local_path, metadata=metadata)
+    interface = MaxOneRecordingInterface(file_path=src_local_path, verbose=True)
+    metadata = interface.get_metadata()
+    metadata["NWBFile"].update(session_start_time=datetime.now(tz=tz.gettz("US/Pacific")))
+    interface.run_conversion(nwbfile_path=dst_local_path, metadata=metadata)
 
     print(f'Successfully converted {src_local_path} to {dst_local_path}')
     return dst_local_path
@@ -83,7 +91,7 @@ def get_dst_s3_nwb_path(original_s3_path: str) -> str:
     return f'{original_s3_path}.nwb'
 
 
-def convert_to_nwb(path: str, dry_run: bool = False):
+def convert_to_nwb(path: str):
     """
     Converts any recognized (and implemented) ephys file format into NWB format.
 
@@ -92,11 +100,12 @@ def convert_to_nwb(path: str, dry_run: bool = False):
      from s3 and re-uploads it to s3 with a new name (if an s3 URI is used).
     """
     if path.endswith('.nwb'):
-        print(f'Nothing to be done.  File "{path}" is already an NWB file.')
+        print(f'Nothing to be done.  File "{path}" is already an NWB file.', file=sys.stderr)
         return
 
     if not path.endswith('.raw.h5'):
-        raise NotImplementedError(f'Unsupported file type cannot be converted to NWB: {path}')
+        print(f'Unsupported file type cannot be converted to NWB: {path}', file=sys.stderr)
+        return
 
     if path.startswith('s3:'):
         dst_s3_path = get_dst_s3_nwb_path(path)
@@ -113,12 +122,13 @@ def convert_to_nwb(path: str, dry_run: bool = False):
             upload_s3_file(src_local_path=nwb_local_path, dst_s3_path=dst_s3_path)
     else:
         # do a local conversion; do not upload to s3
-        convert_maxwell_to_nwb(path, f'{path}.nwb', dry_run=dry_run)
+        convert_maxwell_to_nwb(path, f'{path}.nwb')
 
 
-def main(paths: List[str]):
-    for path in paths:
-        convert_to_nwb(path)
+def main(uuids: List[str]):
+    for uuid in uuids:
+        for s3_path in list_uuid_original_data(uuid):
+            convert_to_nwb(s3_path)
 
 
 if __name__ == '__main__':
