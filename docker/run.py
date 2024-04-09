@@ -17,9 +17,15 @@ def get_s3_client():
     return boto3.client('s3')
 
 
-def list_uuid_original_data(uuid: str, bucket: str = 'braingeneers') -> List[str]:
-    """Lists all objects contained in s3://{bucket}/{uuid}/original/data/ ."""
+def list_uuid_original_data(bucket_slash_uuid: str) -> List[str]:
+    """
+    Lists all objects contained in s3://{bucket}/{uuid}/original/data/ .
+
+    Note: bucket_slash_uuid == {bucket}/{uuid}
+    """
     s3 = get_s3_client()
+    assert '/' in bucket_slash_uuid, f'{bucket_slash_uuid} must be a string representing "bucket/uuid" .'
+    bucket, uuid = bucket_slash_uuid.split('/')
     paginator = s3.get_paginator('list_objects_v2')
     for page in paginator.paginate(Bucket=bucket, Prefix=f'{uuid}/original/data/'):
         for obj in page.get('Contents', []):
@@ -125,9 +131,9 @@ def convert_to_nwb(path: str):
         convert_maxwell_to_nwb(path, f'{path}.nwb')
 
 
-def main(uuids: List[str]):
-    for uuid in uuids:
-        for s3_path in list_uuid_original_data(uuid):
+def main(bucket_slash_uuids: List[str]):
+    for bucket_slash_uuid in bucket_slash_uuids:
+        for s3_path in list_uuid_original_data(bucket_slash_uuid):
             convert_to_nwb(s3_path)
 
 
