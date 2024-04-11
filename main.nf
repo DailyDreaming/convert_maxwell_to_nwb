@@ -13,7 +13,7 @@ process convert_to_nwb {
     disk '2 GB'
 
     input:
-        path bucket_slash_uuid
+        var bucket_slash_uuid
 
     output:
         path "${bucket_slash_uuid}.nwb"
