@@ -1,27 +1,25 @@
-params.input_file = 'notset'
+params.bucket_slash_uuid = 'notset'
 
 workflow {
-    convert_to_nwb(params.input_file)
+    convert_to_nwb(params.bucket_slash_uuid)
     convert_to_nwb.out.view()
 }
 
 process convert_to_nwb {
-    publishDir "s3://braingeneersdev/test/", mode: 'copy', overwrite: true
+    publishDir "s3://${bucket_slash_uuid}/", mode: 'copy', overwrite: true
     container 'quay.io/ucsc_cgl/nwb-converter:latest'
     cpus '2'
     memory '8 GB'
     disk '2 GB'
 
     input:
-        path input_file
+        path bucket_slash_uuid
 
     output:
-        path "${input_file}.nwb"
+        path "${bucket_slash_uuid}.nwb"
 
     script:
         """
-        ls /root/
-        ls /root/.aws/
-        run.py ${input_file}
+        run.py ${bucket_slash_uuid}
         """
 }
