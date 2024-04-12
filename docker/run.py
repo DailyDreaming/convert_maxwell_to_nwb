@@ -131,10 +131,8 @@ def convert_to_nwb(path: str):
         convert_maxwell_to_nwb(path, f'{path}.nwb')
 
 
-def main(bucket_slash_uuids: List[str]):
-    for bucket_slash_uuid in bucket_slash_uuids:
-        for s3_path in list_uuid_original_data(bucket_slash_uuid):
-            convert_to_nwb(s3_path)
+def main(s3_path: List[str]):
+    convert_to_nwb(s3_path[0])
 
 
 if __name__ == '__main__':

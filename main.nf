@@ -7,7 +7,7 @@ workflow {
 }
 
 process convert_to_nwb {
-    publishDir "s3://${output_dir}", mode: 'copy', overwrite: true
+    publishDir "s3://${params.output_dir}", mode: 'copy', overwrite: true
     container 'quay.io/ucsc_cgl/nwb-converter:latest'
     cpus '2'
     memory '8 GB'
