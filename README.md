@@ -1,4 +1,4 @@
-## Convert to NWB Nextflow Workflow
+## A Nextflow Workflow for Converting Files to the NWB Format
 
 This workflow converts various file formats into NWB format (currently raw maxwell is supported).
 
